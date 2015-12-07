@@ -131,5 +131,62 @@ def day_6():
 
     print sum(sum(row) for row in light_grid)
 
-day_6()
+def day_7():
+    input_file = open(input_file_path(7))
+    signals = {}
+    gates = {}
 
+    def calculate(variable):
+        try:
+            var = int(variable)
+            return var
+        except Exception as e:
+            pass
+        if variable in signals.keys():
+            if type(signals[variable]) is int:
+                return signals[variable]
+            else:
+                signals[variable] = calculate(signals[variable])
+                return signals[variable]
+        else:
+            gate = gates[variable]
+            if gate[1] == 'NOT':
+                signals[variable] = ~calculate(gate[0])
+            elif gate[1] == 'AND':
+                signals[variable] = calculate(gate[0]) & calculate(gate[2])
+            elif gate[1] == 'OR':
+                signals[variable] = calculate(gate[0]) | calculate(gate[2])
+            elif gate[1] == 'RSHIFT':
+                signals[variable] = calculate(gate[0]) >> calculate(gate[2])
+            elif gate[1] == 'LSHIFT':
+                signals[variable] = calculate(gate[0]) << calculate(gate[2])
+            if type(signals[variable]) is int:
+                return signals[variable]
+            else:
+                signals[variable] = calculate(signals[variable])
+                return signals[variable]
+
+    for line in input_file:
+        parts = line.split(' -> ')
+        if parts[0].startswith('NOT'):
+            pieces = parts[0].split(' ')
+            gates[parts[1].strip()] = (pieces[1], 'NOT')
+        elif 'OR' in parts[0]:
+            pieces = parts[0].split(' ')
+            gates[parts[1].strip()] = (pieces[0], 'OR', pieces[2])
+        elif 'AND' in parts[0]:
+            pieces = parts[0].split(' ')
+            gates[parts[1].strip()] = (pieces[0], 'AND', pieces[2])
+        elif 'LSHIFT' in parts[0]:
+            pieces = parts[0].split(' ')
+            gates[parts[1].strip()] = (pieces[0], 'LSHIFT', int(pieces[2]))
+        elif 'RSHIFT' in parts[0]:
+            pieces = parts[0].split(' ')
+            gates[parts[1].strip()] = (pieces[0], 'RSHIFT', int(pieces[2]))
+        else:
+            try:
+                signals[parts[1].strip()] = int(parts[0])
+            except Exception as e:
+                signals[parts[1].strip()] = parts[0]
+
+    print calculate('a')
