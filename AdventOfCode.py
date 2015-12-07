@@ -140,14 +140,10 @@ def day_7():
         try:
             var = int(variable)
             return var
-        except Exception as e:
+        except:
             pass
         if variable in signals.keys():
-            if type(signals[variable]) is int:
-                return signals[variable]
-            else:
-                signals[variable] = calculate(signals[variable])
-                return signals[variable]
+            signals[variable] = calculate(signals[variable])
         else:
             gate = gates[variable]
             if gate[1] == 'NOT':
@@ -157,14 +153,10 @@ def day_7():
             elif gate[1] == 'OR':
                 signals[variable] = calculate(gate[0]) | calculate(gate[2])
             elif gate[1] == 'RSHIFT':
-                signals[variable] = calculate(gate[0]) >> calculate(gate[2])
+                signals[variable] = calculate(gate[0]) >> gate[2]
             elif gate[1] == 'LSHIFT':
-                signals[variable] = calculate(gate[0]) << calculate(gate[2])
-            if type(signals[variable]) is int:
-                return signals[variable]
-            else:
-                signals[variable] = calculate(signals[variable])
-                return signals[variable]
+                signals[variable] = calculate(gate[0]) << gate[2]
+        return signals[variable]
 
     for line in input_file:
         parts = line.split(' -> ')
