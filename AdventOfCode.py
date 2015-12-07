@@ -147,7 +147,7 @@ def day_7():
         else:
             gate = gates[variable]
             if gate[1] == 'NOT':
-                signals[variable] = ~calculate(gate[0])
+                signals[variable] = ~calculate(gate[0]) & 0xFFFF
             elif gate[1] == 'AND':
                 signals[variable] = calculate(gate[0]) & calculate(gate[2])
             elif gate[1] == 'OR':
@@ -182,5 +182,3 @@ def day_7():
                 signals[parts[1].strip()] = parts[0]
 
     print calculate('a')
-
-day_7()
