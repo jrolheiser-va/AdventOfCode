@@ -161,19 +161,19 @@ def day_7():
     for line in input_file:
         parts = line.split(' -> ')
         if parts[0].startswith('NOT'):
-            pieces = parts[0].split(' ')
+            pieces = parts[0].split()
             gates[parts[1].strip()] = (pieces[1], 'NOT')
         elif 'OR' in parts[0]:
-            pieces = parts[0].split(' ')
+            pieces = parts[0].split()
             gates[parts[1].strip()] = (pieces[0], 'OR', pieces[2])
         elif 'AND' in parts[0]:
-            pieces = parts[0].split(' ')
+            pieces = parts[0].split()
             gates[parts[1].strip()] = (pieces[0], 'AND', pieces[2])
         elif 'LSHIFT' in parts[0]:
-            pieces = parts[0].split(' ')
+            pieces = parts[0].split()
             gates[parts[1].strip()] = (pieces[0], 'LSHIFT', int(pieces[2]))
         elif 'RSHIFT' in parts[0]:
-            pieces = parts[0].split(' ')
+            pieces = parts[0].split()
             gates[parts[1].strip()] = (pieces[0], 'RSHIFT', int(pieces[2]))
         else:
             try:
@@ -182,3 +182,5 @@ def day_7():
                 signals[parts[1].strip()] = parts[0]
 
     print calculate('a')
+
+day_7()
