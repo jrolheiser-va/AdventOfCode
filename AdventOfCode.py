@@ -182,3 +182,17 @@ def day_7():
                 signals[parts[1].strip()] = parts[0]
 
     print calculate('a')
+
+def day_8():
+    input_file = open('inputs/day_8_input.txt')
+    characters = 0
+    memory = 0
+    difference = 0
+    for line in input_file:
+        line = line.strip()
+        characters += len(line)
+        print line, eval(line)
+        memory += len(eval(line))
+        difference += line.count('\\') + line.count('"') + 2
+
+    print characters - memory, difference
