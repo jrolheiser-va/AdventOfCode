@@ -191,7 +191,6 @@ def day_8():
     for line in input_file:
         line = line.strip()
         characters += len(line)
-        print line, eval(line)
         memory += len(eval(line))
         difference += line.count('\\') + line.count('"') + 2
 
