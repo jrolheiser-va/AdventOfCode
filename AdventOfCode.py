@@ -198,17 +198,14 @@ def day_8():
 
 def day_9():
     from itertools import permutations
+    from collections import defaultdict
 
     input_file = open(input_file_path(9))
-    distances = {}
+    distances = defaultdict(dict)
     for line in input_file:
         path, distance = line.split(' = ')
         source, sink = path.split(' to ')
-        if source not in distances.keys():
-            distances[source] = {}
         distances[source][sink] = int(distance)
-        if sink not in distances.keys():
-            distances[sink] = {}
         distances[sink][source] = int(distance)
 
     shortest_dist = longest_dist = None
