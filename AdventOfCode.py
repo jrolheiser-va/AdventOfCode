@@ -184,7 +184,7 @@ def day_7():
     print calculate('a')
 
 def day_8():
-    input_file = open('inputs/day_8_input.txt')
+    input_file = open(input_file_path(8))
     characters = 0
     memory = 0
     difference = 0
@@ -195,3 +195,31 @@ def day_8():
         difference += line.count('\\') + line.count('"') + 2
 
     print characters - memory, difference
+
+def day_9():
+    from itertools import permutations
+
+    input_file = open(input_file_path(9))
+    distances = {}
+    for line in input_file:
+        path, distance = line.split(' = ')
+        source, sink = path.split(' to ')
+        if source not in distances.keys():
+            distances[source] = {}
+        distances[source][sink] = int(distance)
+        if sink not in distances.keys():
+            distances[sink] = {}
+        distances[sink][source] = int(distance)
+
+    shortest_dist = longest_dist = None
+    for perm in permutations(distances.keys()):
+        potential_dist = 0
+        for ind, city in enumerate(perm[:-1]):
+            potential_dist += distances[city][perm[ind+1]]
+
+        if shortest_dist is None or potential_dist < shortest_dist:
+            shortest_dist = potential_dist
+        if longest_dist is None or potential_dist > longest_dist:
+            longest_dist = potential_dist
+
+    print shortest_dist, longest_dist
