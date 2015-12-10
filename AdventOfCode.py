@@ -1,7 +1,7 @@
-input_file_path = lambda day: 'inputs/day_%s_input.txt' % str(day)
+get_input_for_day = lambda day: open('inputs/day_%s_input.txt' % str(day))
 
 def day_1():
-    input_string = open(input_file_path(1)).readline()
+    input_string = get_input_for_day(1).readline()
 
     current_floor = 0
     first_negative = None
@@ -13,10 +13,10 @@ def day_1():
         if current_floor is -1 and first_negative is None:
             first_negative = index + 1
 
-    print current_floor, first_negative
+    return current_floor, first_negative
 
 def day_2():
-    input_file = open(input_file_path(2))
+    input_file = get_input_for_day(2)
 
     required_material_for_box = lambda l,w,h: 3*l*w + 2*w*h + 2*l*h
     required_ribbon_for_box = lambda l,w,h: 2*l + 2*w + l*w*h
@@ -27,10 +27,10 @@ def day_2():
         required_material += required_material_for_box(*box)
         required_ribbon += required_ribbon_for_box(*box)
 
-    print required_material, required_ribbon
+    return required_material, required_ribbon
 
 def day_3():
-    input_string = open(input_file_path(3)).readline()
+    input_string = get_input_for_day(3).readline()
 
     locations = set()
     santa_pos_x, santa_pos_y = 0, 0
@@ -60,20 +60,20 @@ def day_3():
             locations.add((robo_pos_x, robo_pos_y))
         santa_turn = not santa_turn
 
-    print len(locations)
+    return len(locations)
 
 def day_4():
     from hashlib import md5
-    secret_key = open(input_file_path(4)).readline()
+    secret_key = get_input_for_day(4).readline()
     hash_value = ''
     answer = 0
-    while not hash_value.startswith('000000'):
+    while not hash_value.startswith('00000'):
         answer += 1
         hash_value = md5(secret_key + str(answer)).hexdigest()
-    print answer
+    return answer
 
 def day_5():
-    input_file = open(input_file_path(5))
+    input_file = get_input_for_day(5)
     nice_count = 0
     bad_strings = ['ab', 'cd', 'pq', 'xy']
     vowels = 'aeiou'
@@ -102,10 +102,10 @@ def day_5():
             if xyx_pattern and xyxy_pattern:
                 nice_count += 1
 
-    print nice_count
+    return nice_count
 
 def day_6():
-    input_file = open(input_file_path(6))
+    input_file = get_input_for_day(6)
 
     # part 1 -> 0 for off, 1 for on, use commented out lambda values
     light_grid = [[0 for _ in xrange(1000)] for _ in xrange(1000)]
@@ -129,10 +129,10 @@ def day_6():
             for y in xrange(start_y, end_y+1):
                 light_grid[x][y] = operator(light_grid[x][y])
 
-    print sum(sum(row) for row in light_grid)
+    return sum(sum(row) for row in light_grid)
 
 def day_7():
-    input_file = open(input_file_path(7))
+    input_file = get_input_for_day(7)
     signals = {}
     gates = {}
 
@@ -181,10 +181,10 @@ def day_7():
             except Exception as e:
                 signals[parts[1].strip()] = parts[0]
 
-    print calculate('a')
+    return calculate('a')
 
 def day_8():
-    input_file = open(input_file_path(8))
+    input_file = get_input_for_day(8)
     characters = 0
     memory = 0
     difference = 0
@@ -194,13 +194,13 @@ def day_8():
         memory += len(eval(line))
         difference += line.count('\\') + line.count('"') + 2
 
-    print characters - memory, difference
+    return characters - memory, difference
 
 def day_9():
     from itertools import permutations
     from collections import defaultdict
 
-    input_file = open(input_file_path(9))
+    input_file = get_input_for_day(9)
     distances = defaultdict(dict)
     for line in input_file:
         path, distance = line.split(' = ')
@@ -219,7 +219,7 @@ def day_9():
         if longest_dist is None or potential_dist > longest_dist:
             longest_dist = potential_dist
 
-    print shortest_dist, longest_dist
+    return shortest_dist, longest_dist
 
 def day_10():
     def look_say(input_sequence):
@@ -236,7 +236,12 @@ def day_10():
         result += str(digit_count) + prev_digit
         return result
 
-    sequence = open(input_file_path(10)).readline()
+    sequence = get_input_for_day(10).readline()
     for _ in xrange(40):
         sequence = look_say(sequence)
-    print len(sequence)
+    return len(sequence)
+
+if __name__ == '__main__':
+    for day in xrange(1,26):
+        if 'day_%s' % day in dir():
+            print 'Day %s:' % day, eval('day_%s()' % day)
