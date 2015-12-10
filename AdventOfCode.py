@@ -220,3 +220,23 @@ def day_9():
             longest_dist = potential_dist
 
     print shortest_dist, longest_dist
+
+def day_10():
+    def look_say(input_sequence):
+        result = ''
+        digit_count = 0
+        prev_digit = input_sequence[0]
+        for digit in input_sequence:
+            if prev_digit == digit:
+                digit_count += 1
+            else:
+                result += str(digit_count) + prev_digit
+                prev_digit = digit
+                digit_count = 1
+        result += str(digit_count) + prev_digit
+        return result
+
+    sequence = open(input_file_path(10)).readline()
+    for _ in xrange(40):
+        sequence = look_say(sequence)
+    print len(sequence)
