@@ -241,6 +241,60 @@ def day_10():
         sequence = look_say(sequence)
     return len(sequence)
 
+def day_11():
+    def valid_password(password):
+        if any(bad_char in password for bad_char in 'iol'):
+            return False
+        found_pair = False
+        found_pair_ord = None
+        for ind in xrange(0, len(password)-1):
+            if ord(password[ind]) == ord(password[ind+1]):
+                if found_pair:
+                    if ord(password[ind]) != found_pair_ord:
+                        break
+                else:
+                    found_pair_ord = ord(password[ind])
+                    found_pair = True
+        else:
+            return False
+
+        for ind in xrange(0, len(password)-2):
+            if ord(password[ind]) == ord(password[ind+1]) - 1 and ord(password[ind]) == ord(password[ind+2]) - 2:
+                break
+        else:
+            return False
+        return True
+
+    def next_password(password):
+        next_pass = ''
+        for ind, char in enumerate(password):
+            if char in 'iol':
+                next_ord = (ord(char)+1) % 123
+                char = chr(next_ord or 97)
+                next_pass += char
+                for _ in password[ind:-1]:
+                    next_pass += 'a'
+                return next_pass
+            else:
+                next_pass += char
+        next_pass = ''
+        overflow = True
+        for ind, char in enumerate(password[::-1]):
+            next_ord = (ord(char)+1) % 123
+            if overflow:
+                next_pass += chr(next_ord or 97)
+                if next_ord != 0:
+                    overflow = False
+            else:
+                next_pass += char
+
+        return next_pass[::-1]
+
+    input_password = get_input_for_day(11).readline()
+    while not valid_password(input_password):
+        input_password = next_password(input_password)
+    return input_password
+
 if __name__ == '__main__':
     for day in xrange(1,26):
         if 'day_%s' % day in dir():
