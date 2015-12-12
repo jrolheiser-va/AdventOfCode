@@ -295,6 +295,28 @@ def day_11():
         input_password = next_password(input_password)
     return input_password
 
+def day_12():
+    import json
+    part_1 = False
+
+    def calc_sum(n):
+        sum_n = 0
+        if type(n) == list:
+            for elem in n:
+                sum_n += calc_sum(elem)
+        elif type(n) == dict:
+            if part_1 or ('red' not in n.keys() and 'red' not in n.values()):
+                for key in n:
+                    sum_n += calc_sum(n[key])
+        elif type(n) == int:
+            sum_n += n
+        return sum_n
+
+    input_file = get_input_for_day(12).readline()
+    input_json = json.loads(input_file)
+    sum_input = calc_sum(input_json)
+    return sum_input
+
 if __name__ == '__main__':
     for day in xrange(1,26):
         if 'day_%s' % day in dir():
