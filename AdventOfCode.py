@@ -317,6 +317,37 @@ def day_12():
     sum_input = calc_sum(input_json)
     return sum_input
 
+def day_13():
+    part_1 = False
+
+    from collections import defaultdict
+    from itertools import permutations
+
+    input_file = get_input_for_day(13)
+    happiness = defaultdict(dict)
+    for line in input_file:
+        parts = line.split()
+        happiness[parts[0]][parts[10].rstrip('.')] = int(parts[3])
+        if parts[2] == 'lose':
+            happiness[parts[0]][parts[10].rstrip('.')] *= -1
+
+    if not part_1:
+        happiness['you'] = {}
+        for key in happiness:
+            happiness[key]['you'] = 0
+            happiness['you'][key] = 0
+
+    happiness_max = 0
+    for perm in permutations(happiness.keys()):
+        happiness_perm = 0
+        for ind, person in enumerate(perm[:-1]):
+            happiness_perm += happiness[person][perm[ind-1]]
+            happiness_perm += happiness[person][perm[ind+1]]
+            if happiness_perm > happiness_max:
+                happiness_max = happiness_perm
+    print happiness_max
+
+
 if __name__ == '__main__':
     for day in xrange(1,26):
         if 'day_%s' % day in dir():
