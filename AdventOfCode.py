@@ -1,4 +1,6 @@
 get_input_for_day = lambda day: open('inputs/day_%s_input.txt' % str(day))
+part_1 = True
+
 
 def day_1():
     input_string = get_input_for_day(1).readline()
@@ -58,7 +60,8 @@ def day_3():
             elif symbol is 'v':
                 robo_pos_y -= 1
             locations.add((robo_pos_x, robo_pos_y))
-        santa_turn = not santa_turn
+        if not part_1:
+            santa_turn = not santa_turn
 
     return len(locations)
 
@@ -67,7 +70,8 @@ def day_4():
     secret_key = get_input_for_day(4).readline()
     hash_value = ''
     answer = 0
-    while not hash_value.startswith('00000'):
+    zeros = '00000' if part_1 else '000000'
+    while not hash_value.startswith(zeros):
         answer += 1
         hash_value = md5(secret_key + str(answer)).hexdigest()
     return answer
@@ -77,7 +81,6 @@ def day_5():
     nice_count = 0
     bad_strings = ['ab', 'cd', 'pq', 'xy']
     vowels = 'aeiou'
-    part_1 = False
     for word in input_file:
         if part_1:
             has_double = False
@@ -107,11 +110,15 @@ def day_5():
 def day_6():
     input_file = get_input_for_day(6)
 
-    # part 1 -> 0 for off, 1 for on, use commented out lambda values
     light_grid = [[0 for _ in xrange(1000)] for _ in xrange(1000)]
-    turn_on = lambda val: val + 1  # _: 1
-    turn_off = lambda val: max(0, val-1)  # _: 0
-    toggle = lambda val: val + 2  # val: val ^ 1
+    if part_1:
+        turn_on = lambda _: 1
+        turn_off = lambda _: 0
+        toggle = lambda val: val ^ 1
+    else:
+        turn_on = lambda val: val + 1
+        turn_off = lambda val: max(0, val-1)
+        toggle = lambda val: val + 2
     operator = None
     for line in input_file:
         line = line.replace(' through ', ',')
@@ -237,7 +244,8 @@ def day_10():
         return result
 
     sequence = get_input_for_day(10).readline()
-    for _ in xrange(40):
+    repetitions = 40 if part_1 else 50
+    for _ in xrange(repetitions):
         sequence = look_say(sequence)
     return len(sequence)
 
@@ -297,7 +305,6 @@ def day_11():
 
 def day_12():
     import json
-    part_1 = False
 
     def calc_sum(n):
         sum_n = 0
@@ -318,8 +325,6 @@ def day_12():
     return sum_input
 
 def day_13():
-    part_1 = False
-
     from collections import defaultdict
     from itertools import permutations
 
@@ -345,7 +350,7 @@ def day_13():
             happiness_perm += happiness[person][perm[ind+1]]
             if happiness_perm > happiness_max:
                 happiness_max = happiness_perm
-    print happiness_max
+    return happiness_max
 
 
 if __name__ == '__main__':
