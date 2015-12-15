@@ -389,6 +389,47 @@ def day_14():
            reindeer_data[max(reindeer_data, key=lambda x: reindeer_data[x]['points'])]['points']
 
 
+def day_15():
+    from collections import defaultdict
+
+    input_file = get_input_for_day(15)
+    ingredients = defaultdict(dict)
+    for line in input_file:
+        parts = line.split()
+        ingredients[parts[0].rstrip(':')]['capacity'] = int(parts[2].rstrip(','))
+        ingredients[parts[0].rstrip(':')]['durability'] = int(parts[4].strip(','))
+        ingredients[parts[0].rstrip(':')]['flavor'] = int(parts[6].rstrip(','))
+        ingredients[parts[0].rstrip(':')]['texture'] = int(parts[8].rstrip(','))
+        ingredients[parts[0].rstrip(':')]['calories'] = int(parts[10])
+
+    current_best = 0
+    best_calorie_wise = 0
+    teaspoons = 100
+    for ing_1 in xrange(teaspoons+1):
+        for ing_2 in xrange(teaspoons+1 - ing_1):
+            for ing_3 in xrange(teaspoons+1 - ing_1 - ing_2):
+                ing_4 = teaspoons - ing_1 - ing_2 - ing_3
+
+                ingredient_amounts = [ing_1, ing_2, ing_3, ing_4]
+
+                capacity = durability = flavor = texture = calories = 0
+
+                for index, name in enumerate(ingredients.keys()):
+                    capacity += ingredients[name]['capacity'] * ingredient_amounts[index]
+                    durability += ingredients[name]['durability'] * ingredient_amounts[index]
+                    flavor += ingredients[name]['flavor'] * ingredient_amounts[index]
+                    texture += ingredients[name]['texture'] * ingredient_amounts[index]
+                    calories += ingredients[name]['calories'] * ingredient_amounts[index]
+
+                potential = reduce(lambda x, y: x*y, map(lambda num: max(0, num), [capacity, durability, flavor, texture]))
+                if potential > current_best:
+                    current_best = potential
+                if calories == 500 and potential > best_calorie_wise:
+                    best_calorie_wise = potential
+
+    return current_best, best_calorie_wise
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
