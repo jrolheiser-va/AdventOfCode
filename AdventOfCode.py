@@ -1,5 +1,5 @@
 get_input_for_day = lambda day: open('inputs/day_%s_input.txt' % str(day))
-part_1 = True
+part_1 = False
 
 
 def day_1():
@@ -352,8 +352,44 @@ def day_13():
                 happiness_max = happiness_perm
     return happiness_max
 
+def day_14():
+    from collections import defaultdict
+
+    input_file = get_input_for_day(14)
+    reindeer_data = defaultdict(dict)
+    race_time = 2503
+
+    for line in input_file:
+        parts = line.split()
+        reindeer_data[parts[0]]['speed'] = int(parts[3])
+        reindeer_data[parts[0]]['endurance'] = int(parts[6])
+        reindeer_data[parts[0]]['rest'] = int(parts[13])
+        reindeer_data[parts[0]]['travelled'] = 0
+        reindeer_data[parts[0]]['points'] = 0
+
+    for num in xrange(0, race_time):
+        for reindeer in reindeer_data:
+            total_interval = reindeer_data[reindeer]['endurance'] + reindeer_data[reindeer]['rest']
+            fly_interval = total_interval % reindeer_data[reindeer]['rest']
+            if num % total_interval < fly_interval:
+                reindeer_data[reindeer]['travelled'] += reindeer_data[reindeer]['speed']
+        if not part_1:
+            current_leaders = []
+            current_leader_distance = 0
+            for reindeer in reindeer_data:
+                if reindeer_data[reindeer]['travelled'] > current_leader_distance:
+                    current_leader_distance = reindeer_data[reindeer]['travelled']
+                    current_leaders = [reindeer]
+                elif reindeer_data[reindeer]['travelled'] == current_leader_distance:
+                    current_leaders.append(reindeer)
+            for leader in current_leaders:
+                reindeer_data[leader]['points'] += 1
+
+    return reindeer_data[max(reindeer_data, key=lambda x: reindeer_data[x]['travelled'])]['travelled'], \
+           reindeer_data[max(reindeer_data, key=lambda x: reindeer_data[x]['points'])]['points']
+
 
 if __name__ == '__main__':
-    for day in xrange(1,26):
+    for day in xrange(1, 26):
         if 'day_%s' % day in dir():
             print 'Day %s:' % day, eval('day_%s()' % day)
