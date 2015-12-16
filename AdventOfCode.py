@@ -391,41 +391,42 @@ def day_14():
 
 def day_15():
     from collections import defaultdict
+    from itertools import product
 
     input_file = get_input_for_day(15)
     ingredients = defaultdict(dict)
     for line in input_file:
-        parts = line.split()
-        ingredients[parts[0].rstrip(':')]['capacity'] = int(parts[2].rstrip(','))
-        ingredients[parts[0].rstrip(':')]['durability'] = int(parts[4].strip(','))
-        ingredients[parts[0].rstrip(':')]['flavor'] = int(parts[6].rstrip(','))
-        ingredients[parts[0].rstrip(':')]['texture'] = int(parts[8].rstrip(','))
-        ingredients[parts[0].rstrip(':')]['calories'] = int(parts[10])
+        parts = line.strip(':').replace(',', ' ').split()
+        ingredients[parts[0]]['capacity'] = int(parts[2])
+        ingredients[parts[0]]['durability'] = int(parts[4])
+        ingredients[parts[0]]['flavor'] = int(parts[6])
+        ingredients[parts[0]]['texture'] = int(parts[8])
+        ingredients[parts[0]]['calories'] = int(parts[10])
 
     current_best = 0
     best_calorie_wise = 0
     teaspoons = 100
-    for ing_1 in xrange(teaspoons+1):
-        for ing_2 in xrange(teaspoons+1 - ing_1):
-            for ing_3 in xrange(teaspoons+1 - ing_1 - ing_2):
-                ing_4 = teaspoons - ing_1 - ing_2 - ing_3
 
-                ingredient_amounts = [ing_1, ing_2, ing_3, ing_4]
+    ingredient_combinations = [xrange(1, teaspoons+1) for _ in xrange(len(ingredients.keys())-1)]
+    for combo in product(*ingredient_combinations):
+        if sum(combo) > 100:
+            continue
+        last_ingredient_amount = teaspoons - sum(combo)
+        ingredient_amounts = list(combo) + [last_ingredient_amount]
 
-                capacity = durability = flavor = texture = calories = 0
+        capacity = durability = flavor = texture = calories = 0
 
-                for index, name in enumerate(ingredients.keys()):
-                    capacity += ingredients[name]['capacity'] * ingredient_amounts[index]
-                    durability += ingredients[name]['durability'] * ingredient_amounts[index]
-                    flavor += ingredients[name]['flavor'] * ingredient_amounts[index]
-                    texture += ingredients[name]['texture'] * ingredient_amounts[index]
-                    calories += ingredients[name]['calories'] * ingredient_amounts[index]
+        for index, name in enumerate(ingredients.keys()):
+            capacity += ingredients[name]['capacity'] * ingredient_amounts[index]
+            durability += ingredients[name]['durability'] * ingredient_amounts[index]
+            flavor += ingredients[name]['flavor'] * ingredient_amounts[index]
+            texture += ingredients[name]['texture'] * ingredient_amounts[index]
+            calories += ingredients[name]['calories'] * ingredient_amounts[index]
 
-                potential = reduce(lambda x, y: x*y, map(lambda num: max(0, num), [capacity, durability, flavor, texture]))
-                if potential > current_best:
-                    current_best = potential
-                if calories == 500 and potential > best_calorie_wise:
-                    best_calorie_wise = potential
+        potential = reduce(lambda x, y: x*y, map(lambda num: max(0, num), [capacity, durability, flavor, texture]))
+        current_best = max(potential, current_best)
+        if calories == 500:
+            best_calorie_wise = max(potential, best_calorie_wise)
 
     return current_best, best_calorie_wise
 
