@@ -430,6 +430,59 @@ def day_15():
     return current_best, best_calorie_wise
 
 
+def day_16():
+    from collections import defaultdict
+    input_file = get_input_for_day(16)
+    sues = defaultdict(dict)
+    for line in input_file:
+        parts = line.lstrip('Sue ').replace(':', ',').split(', ')
+        for index, elem in enumerate(parts[1::2]):
+            sues[parts[0]][elem] = int(parts[2*index+2])
+    matching_criteria = {
+        'children': 3,
+        'cats': 7,
+        'samoyeds': 2,
+        'pomeranians': 3,
+        'akitas': 0,
+        'vizslas': 0,
+        'goldfish': 5,
+        'trees': 3,
+        'cars': 2,
+        'perfumes': 1
+    }
+    matching_sue_num = 0
+    for sue_num in sues:
+        matching_sue = True
+        for compound in sues[sue_num]:
+            if part_1:
+                if sues[sue_num][compound] == matching_criteria[compound]:
+                    continue
+                else:
+                    matching_sue = False
+                    break
+            else:
+                if compound in ['cats', 'trees']:
+                    if sues[sue_num][compound] > matching_criteria[compound]:
+                        continue
+                    else:
+                        matching_sue = False
+                        break
+                elif compound in ['pomeranians', 'goldfish']:
+                    if sues[sue_num][compound] < matching_criteria[compound]:
+                        continue
+                    else:
+                        matching_sue = False
+                        break
+                elif sues[sue_num][compound] == matching_criteria[compound]:
+                    continue
+                else:
+                    matching_sue = False
+                    break
+        if matching_sue:
+            matching_sue_num = sue_num
+            break
+    return matching_sue_num
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
