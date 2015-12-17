@@ -484,6 +484,27 @@ def day_16():
             break
     return matching_sue_num
 
+def day_17():
+    from itertools import combinations
+    input_file = get_input_for_day(17)
+
+    liters = 150
+    containers = []
+    for line in input_file:
+        containers.append(int(line))
+    containers = sorted(containers, reverse=True)
+
+    combos = 0
+    found_min = False
+    for i in xrange(len(containers)):
+        for combo in combinations(containers, i+1):
+            if sum(combo) == liters:
+                found_min = True
+                combos += 1
+        if found_min and not part_1:
+            break
+    return combos
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
