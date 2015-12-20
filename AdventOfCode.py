@@ -1,5 +1,5 @@
 get_input_for_day = lambda day: open('inputs/day_%s_input.txt' % str(day))
-part_1 = False
+part_1 = True
 
 
 def day_1():
@@ -504,6 +504,180 @@ def day_17():
         if found_min and not part_1:
             break
     return combos
+
+
+def day_18():
+    size = 100
+    light_grid = [['.' for _ in xrange(size)] for _ in xrange(size)]
+
+    def number_of_on_neighbors(x, y):
+        on_neighbors = 0
+        bottom = top = left = right = True
+        if y == 0:
+            left = False
+        if y == size-1:
+            right = False
+        if x == 0:
+            top = False
+        if x == size-1:
+            bottom = False
+        if bottom:
+            if light_grid[x+1][y] == '#':
+                on_neighbors += 1
+        if top:
+            if light_grid[x-1][y] == '#':
+                on_neighbors += 1
+        if left:
+            if light_grid[x][y-1] == '#':
+                on_neighbors += 1
+        if right:
+            if light_grid[x][y+1] == '#':
+                on_neighbors += 1
+        if bottom and right and light_grid[x+1][y+1] == '#':
+            on_neighbors += 1
+        if bottom and left and light_grid[x+1][y-1] == '#':
+            on_neighbors += 1
+        if top and right and light_grid[x-1][y+1] == '#':
+            on_neighbors += 1
+        if top and left and light_grid[x-1][y-1] == '#':
+            on_neighbors += 1
+        return on_neighbors
+
+    input_file = get_input_for_day(18)
+    row = 0
+    for line in input_file:
+        for ind, char in enumerate(line.strip()):
+            light_grid[row][ind] = char
+        row += 1
+    if not part_1:
+        light_grid[0][0] = light_grid[0][size-1] = light_grid[size-1][0] = light_grid[size-1][size-1] = '#'
+    next_state = [['.' for _ in xrange(size)] for _ in xrange(size)]
+    for _ in xrange(100):
+        for x in xrange(size):
+            for y in xrange(size):
+                neighbors = number_of_on_neighbors(x, y)
+                if light_grid[x][y] == '.':
+                    if neighbors == 3:
+                        next_state[x][y] = '#'
+                    else:
+                        next_state[x][y] = '.'
+                elif light_grid[x][y] == '#':
+                    if neighbors == 2 or neighbors == 3:
+                        next_state[x][y] = '#'
+                    else:
+                        next_state[x][y] = '.'
+        light_grid = next_state
+        if not part_1:
+            light_grid[0][0] = light_grid[0][size-1] = light_grid[size-1][0] = light_grid[size-1][size-1] = '#'
+        next_state = [['.' for _ in xrange(size)] for _ in xrange(size)]
+    num = 0
+    for x in xrange(size):
+        for y in xrange(size):
+            if light_grid[x][y] == '#':
+                num += 1
+    return num
+
+
+def day_19():
+    from collections import defaultdict
+    from random import shuffle
+
+    input_file = get_input_for_day(19)
+    starting_molecule_atoms = []
+    atom_replacements = defaultdict(list)
+    molecules = set()
+
+    def do_replacements(molecule):
+        next_molecules = []
+        for ind, atm in enumerate(molecule):
+            if atm in atom_replacements:
+                for replace in atom_replacements[atm]:
+                    next_molecule = molecule[:ind] + replace + molecule[ind+1:]
+                    stringed_molecule = ''.join(next_molecule)
+                    if stringed_molecule not in molecules:
+                        molecules.add(stringed_molecule)
+                        next_molecules.append(next_molecule)
+        return next_molecules
+
+    done_replacements = False
+    for line in input_file:
+        if done_replacements:
+            starting_sequence = line.strip()
+            while len(starting_sequence):
+                char_one = starting_sequence[0]
+                if char_one in atom_replacements.keys():
+                    starting_molecule_atoms.append(char_one)
+                    starting_sequence = starting_sequence[1:]
+                else:
+                    char_two = starting_sequence[1]
+                    if char_one+char_two in atom_replacements.keys():
+                        starting_molecule_atoms.append(char_one+char_two)
+                        starting_sequence = starting_sequence[2:]
+                    else:
+                        starting_molecule_atoms.append(char_one)
+                        starting_sequence = starting_sequence[1:]
+        elif ' => ' in line:
+            parts = line.strip().split(' => ')
+            atom_replacements[parts[0]].append(parts[1])
+        else:
+            done_replacements = True
+    for atom in atom_replacements:
+        for index, replacement in enumerate(atom_replacements[atom]):
+            replacement_list = []
+            while len(replacement):
+                char_one = replacement[0]
+                if char_one in atom_replacements.keys():
+                    replacement_list.append(char_one)
+                    replacement = replacement[1:]
+                else:
+                    char_two = '' if len(replacement) == 1 else replacement[1]
+                    if char_one+char_two in atom_replacements.keys():
+                        replacement_list.append(char_one+char_two)
+                        replacement = replacement[2:]
+                    else:
+                        replacement_list.append(char_one)
+                        replacement = replacement[1:]
+            atom_replacements[atom][index] = replacement_list
+
+    do_replacements(starting_molecule_atoms)
+    part_1_num = len(molecules)
+    target = 'e'
+    current = ''.join(starting_molecule_atoms)
+    num_replacements = 0
+    replacements = [(atom, ''.join(replacement)) for atom in atom_replacements for replacement in atom_replacements[atom]]
+    replacements = sorted(replacements, key=lambda x: len(x[1]), reverse=True)
+    while current != target:
+        old_current = current
+        for atom, replacement in replacements:
+            if replacement in current:
+                current = current.replace(replacement, atom, 1)
+                num_replacements += 1
+        if current == old_current:
+            current = ''.join(starting_molecule_atoms)
+            num_replacements = 0
+            shuffle(replacements)
+
+    return part_1_num, num_replacements
+
+def day_20():
+    from collections import defaultdict
+    number = int(get_input_for_day(20).readline())
+    if part_1:
+        number /= 10
+        modifier = 1
+    else:
+        modifier = 11
+    factors = defaultdict(int)
+    lowest = number
+    for num in xrange(1, number):
+        step_range = range(num, number+1, num)
+        if not part_1:
+            step_range = step_range[:50]
+        for step in step_range:
+            factors[step] += num * modifier
+            if factors[step] > number:
+                lowest = min(step, lowest)
+    return lowest
 
 if __name__ == '__main__':
     for day in xrange(1, 26):
