@@ -679,6 +679,72 @@ def day_20():
                 lowest = min(step, lowest)
     return lowest
 
+def day_21():
+    from collections import defaultdict
+    from itertools import combinations
+
+    def simulate(att, defen):
+        player_turn = True
+        player_health = 100
+        boss_health = 103
+        while player_health * boss_health > 0:
+            if player_turn:
+                boss_health -= max(att-2, 1)
+            else:
+                player_health -= max(9-defen, 1)
+            player_turn = not player_turn
+        if player_health > boss_health:
+            return True
+        return False
+
+    store = {
+        'Weapons': defaultdict(dict),
+        'Armor': defaultdict(dict),
+        'Rings': defaultdict(dict)
+    }
+    input_file = get_input_for_day(21)
+    mode = None
+    for line in input_file:
+        if line.startswith('Weapons'):
+            mode = 'Weapons'
+            continue
+        elif line.startswith('Armor'):
+            mode = 'Armor'
+            continue
+        elif line.startswith('Rings'):
+            mode = 'Rings'
+            continue
+        else:
+            parts = line.replace(' +', '').split()
+            if not len(parts):
+                continue
+            store[mode][parts[0]] = (int(parts[1]), int(parts[2]), int(parts[3]))
+    lowest_cost = 100000
+    max_cost = 0
+    for weapon in combinations(store['Weapons'].keys(), 1):
+        for j in range(2):
+            for armour in combinations(store['Armor'].keys(), j):
+                for i in range(3):
+                    for rings in combinations(store['Rings'].keys(), i):
+                        cost = defense = att = 0
+                        for wep in weapon:
+                            cost += store['Weapons'][wep][0]
+                            att += store['Weapons'][wep][1]
+                            defense += store['Weapons'][wep][2]
+                        for arm in armour:
+                            cost += store['Armor'][arm][0]
+                            att += store['Armor'][arm][1]
+                            defense += store['Armor'][arm][2]
+                        for ring in rings:
+                            cost += store['Rings'][ring][0]
+                            att += store['Rings'][ring][1]
+                            defense += store['Rings'][ring][2]
+                        if simulate(att, defense):
+                            lowest_cost = min(lowest_cost, cost)
+                        else:
+                            max_cost = max(max_cost, cost)
+    return lowest_cost, max_cost
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
