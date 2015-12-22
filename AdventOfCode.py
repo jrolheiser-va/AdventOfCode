@@ -745,7 +745,99 @@ def day_21():
                             max_cost = max(max_cost, cost)
     return lowest_cost, max_cost
 
-if __name__ == '__main__':
-    for day in xrange(1, 26):
-        if 'day_%s' % day in dir():
-            print 'Day %s:' % day, eval('day_%s()' % day)
+def day_22():
+
+    hard_mode = False
+
+    def simulate(list_of_spells):
+        player_turn = True
+        mana_used = 0
+        player_hp = 50
+        player_mp = 500
+        player_armour = 0
+
+        boss_hp = 51
+        boss_dmg = 9
+
+        shield_effect = 0
+        poison_effect = 0
+        recharge_effect = 0
+        while True:
+            if hard_mode:
+                if player_turn:
+                    player_hp -= 1
+                    if player_hp < 1:
+                        return False, mana_used
+            if shield_effect:
+                player_armour = 7
+                shield_effect -= 1
+            else:
+                player_armour = 0
+            if poison_effect:
+                boss_hp -= 3
+                poison_effect -= 1
+            if recharge_effect:
+                player_mp += 101
+                recharge_effect -= 1
+
+            if boss_hp < 1:
+                return True, mana_used
+
+            if player_turn:
+                if len(list_of_spells) == 0:
+                    return False, mana_used
+                spell_to_cast = list_of_spells.pop()
+                if spell_to_cast == "M.Missile":
+                    player_mp -= 53
+                    mana_used += 53
+                    boss_hp -= 4
+                elif spell_to_cast == "Drain":
+                    player_mp -= 73
+                    mana_used += 73
+                    boss_hp -= 2
+                    player_hp += 2
+                elif spell_to_cast == "Shield":
+                    player_mp -= 113
+                    mana_used += 113
+                    if shield_effect == 0:
+                        shield_effect = 6
+                elif spell_to_cast == "Poison":
+                    player_mp -= 173
+                    mana_used += 173
+                    if poison_effect == 0:
+                        poison_effect = 6
+                elif spell_to_cast == "Recharge":
+                    player_mp -= 229
+                    mana_used += 229
+                    if recharge_effect == 0:
+                        recharge_effect = 5
+                if player_mp < 0:
+                    return False, mana_used
+                if boss_hp < 1:
+                    return True, mana_used
+                player_turn = False
+            else:
+                player_hp -= max(boss_dmg - player_armour, 1)
+                player_turn = True
+                if player_hp < 1:
+                    return False, mana_used
+
+    from itertools import product
+    spells = ['M.Missile', 'Drain', 'Shield', 'Poison', 'Recharge']
+    lowest_cost = 100000
+    optimal_strategy = None
+    for num_spells in xrange(1, 100):
+        for spells_to_cast in product(spells, repeat=num_spells):
+            player_won, mana_burned = simulate(list(spells_to_cast))
+            if player_won:
+                if mana_burned < lowest_cost:
+                    optimal_strategy = spells_to_cast
+                    lowest_cost = min(lowest_cost, mana_burned)
+        if lowest_cost != 100000:
+            return lowest_cost, optimal_strategy
+
+print day_22()
+# if __name__ == '__main__':
+#     for day in xrange(1, 26):
+#         if 'day_%s' % day in dir():
+#             print 'Day %s:' % day, eval('day_%s()' % day)
