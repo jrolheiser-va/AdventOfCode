@@ -1,9 +1,9 @@
 package main
 
 import (
-    "fmt"
-    "bufio"
-    "os"
+	"fmt"
+	"bufio"
+	"os"
 	"strings"
 	"sort"
 	"strconv"
@@ -32,24 +32,24 @@ func getInputForDay(dayNum int) []string {
 }
 
 func day_1(){
-    lines := getInputForDay(1)
-    floor := 0
-    first_negative := 0
-    found_negative := false
-    for _, line := range lines {
-        for ind, char := range line {
-            if char == '('{
-                floor += 1
-            } else if char == ')'{
-                floor -= 1
-            }
-            if floor < 0 && !found_negative{
-                found_negative = true
-                first_negative = ind + 1
-            }
-        }
-    }
-    fmt.Printf("Day 1: %v %v\n", floor, first_negative)
+	lines := getInputForDay(1)
+	floor := 0
+	first_negative := 0
+	found_negative := false
+	for _, line := range lines {
+		for ind, char := range line {
+			if char == '('{
+				floor += 1
+			} else if char == ')'{
+				floor -= 1
+			}
+			if floor < 0 && !found_negative{
+				found_negative = true
+				first_negative = ind + 1
+			}
+		}
+	}
+	fmt.Printf("Day 1: %v %v\n", floor, first_negative)
 }
 
 func day_2() {
