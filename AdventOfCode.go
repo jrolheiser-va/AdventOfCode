@@ -12,23 +12,23 @@ import (
 func getInputForDay(dayNum int) []string {
 
 	filepath := fmt.Sprintf("inputs/day_%v_input.txt", dayNum)
-    file, err := os.Open(filepath)
+	file, err := os.Open(filepath)
 
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    defer file.Close()
-    var lines []string
+	defer file.Close()
+	var lines []string
 
-    scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(file)
 
-    // Read all lines of the file
-    for scanner.Scan() {
-        lines = append(lines, scanner.Text())
-    }
+	// Read all lines of the file
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
 
-    return lines   
+	return lines
 }
 
 func day_1(){
