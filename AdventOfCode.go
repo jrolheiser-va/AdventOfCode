@@ -73,6 +73,6 @@ func day_2() {
 }
 
 func main() {
-    day_1()
+	day_1()
 	day_2()
 }
