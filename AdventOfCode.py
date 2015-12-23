@@ -836,8 +836,41 @@ def day_22():
         if lowest_cost != 100000:
             return lowest_cost, optimal_strategy
 
-print day_22()
-# if __name__ == '__main__':
-#     for day in xrange(1, 26):
-#         if 'day_%s' % day in dir():
-#             print 'Day %s:' % day, eval('day_%s()' % day)
+def day_23():
+    input_file = get_input_for_day(23)
+    lines = []
+    for line in input_file:
+        lines.append(line.translate(None, ','))
+
+    a = 0 if part_1 else 1
+    b = 0
+    index = 0
+    while True:
+        if index < 0 or len(lines)-1 < index:
+            break
+        line = lines[index]
+        parts = line.split()
+        if parts[0] == 'hlf':
+            exec('%s /= 2' % parts[1])
+        elif parts[0] == 'tpl':
+            exec('%s *= 3' % parts[1])
+        elif parts[0] == 'inc':
+            exec('%s += 1' % parts[1])
+        elif parts[0] == 'jmp':
+            index += int(parts[1])
+            continue
+        elif parts[0] == 'jie':
+            if eval(parts[1]) % 2 == 0:
+                index += int(parts[2])
+                continue
+        elif parts[0] == 'jio':
+            if eval(parts[1]) == 1:
+                index += int(parts[2])
+                continue
+        index += 1
+    return b
+
+if __name__ == '__main__':
+    for day in xrange(1, 26):
+        if 'day_%s' % day in dir():
+            print 'Day %s:' % day, eval('day_%s()' % day)
