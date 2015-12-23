@@ -4,10 +4,14 @@ import (
     "fmt"
     "bufio"
     "os"
+	"strings"
+	"sort"
+	"strconv"
 )
 
-func getInput(filepath string) []string {
+func getInputForDay(dayNum int) []string {
 
+	filepath := fmt.Sprintf("inputs/day_%v_input.txt", dayNum)
     file, err := os.Open(filepath)
 
     if err != nil {
@@ -28,7 +32,7 @@ func getInput(filepath string) []string {
 }
 
 func day_1(){
-    lines := getInput("inputs/day_1_input.txt")
+    lines := getInputForDay(1)
     floor := 0
     first_negative := 0
     found_negative := false
@@ -48,6 +52,27 @@ func day_1(){
     fmt.Printf("Day 1: %v %v\n", floor, first_negative)
 }
 
+func day_2() {
+	lines := getInputForDay(2)
+	wrapping_paper := 0
+	ribbon := 0
+	for _, line := range lines {
+		temp := strings.Split(line, "x")
+		var dimensions = []int{}
+		tmp := 0
+		for _, dimension := range temp {
+			tmp, _ = strconv.Atoi(dimension)
+			dimensions = append(dimensions, tmp)
+		}
+		sort.Ints(dimensions)
+		wrapping_paper += 2 * (dimensions[0] * dimensions[1] + dimensions[0] * dimensions[2] + dimensions[1] * dimensions[2])
+		wrapping_paper += dimensions[0] * dimensions[1]
+		ribbon += 2 * (dimensions[0] + dimensions[1]) + dimensions[0] * dimensions[1] * dimensions[2]
+	}
+	fmt.Printf("Day 2: %v, %v", wrapping_paper, ribbon)
+}
+
 func main() {
     day_1()
+	day_2()
 }
