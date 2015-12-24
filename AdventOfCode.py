@@ -870,6 +870,38 @@ def day_23():
         index += 1
     return b
 
+def day_24():
+    from itertools import combinations
+    from random import shuffle
+    input_file = get_input_for_day(24)
+    packages = []
+    for line in input_file:
+        packages.append(int(line))
+    split_weight = 0
+    while split_weight == 0:
+        shuffle(packages)
+        left = list()
+        middle = list()
+        right = list()
+        back = list()
+        for package in packages:
+            if sum(left) <= sum(middle) and sum(left) <= sum(right) and sum(left) <= sum(back):
+                left.append(package)
+            elif sum(middle) <= sum(left) and sum(middle) <= sum(right) and sum(middle) <= sum(back):
+                middle.append(package)
+            elif sum(right) <= sum(left) and sum(right) <= sum(middle) and sum(right) <= sum(back):
+                right.append(package)
+            else:
+                back.append(package)
+        if sum(left) == sum(middle) and sum(left) == sum(right) and sum(left) == sum(back):
+            split_weight = sum(left)
+    lowest_entanglement = 10000000000000
+    for i in xrange(10):
+        for combo in combinations(packages, i):
+            if sum(combo) == split_weight:
+                lowest_entanglement = min(lowest_entanglement, reduce(lambda x, y: x * y, combo))
+    return lowest_entanglement
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
