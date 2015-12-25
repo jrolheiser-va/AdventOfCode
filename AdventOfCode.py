@@ -902,6 +902,22 @@ def day_24():
                 lowest_entanglement = min(lowest_entanglement, reduce(lambda x, y: x * y, combo))
     return lowest_entanglement
 
+def day_25():
+    row = 2978
+    col = 3083
+    code_seed = 20151125
+    index = 1
+    for r in xrange(row):
+        index += r
+    for c in xrange(1, col):
+        index += row + c
+
+    code = code_seed
+    for ind in xrange(index-1):
+        code *= 252533
+        code %= 33554393
+    return code
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
