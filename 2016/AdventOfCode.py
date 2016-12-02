@@ -57,6 +57,47 @@ def day_1():
     total_dist = abs(x) + abs(y)
     return total_dist
 
+
+def day_2():
+    input_file = get_input_for_day(2)
+
+    x = 1
+    y = 1
+    input_matrix = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ]
+    if part_2:
+        x = 0
+        y = 2
+        input_matrix = [
+            [0, 0, 1, 0, 0],
+            [0, 2, 3, 4, 0],
+            [5, 6, 7, 8, 9],
+            [0, 'A', 'B', 'C', 0],
+            [0, 0, 'D', 0, 0],
+        ]
+
+    moves = []
+    for line in input_file:
+        for char in line:
+            if char == "U":
+                if not part_2 or (y-1 > -1 and input_matrix[y-1][x] != 0):
+                    y = max(y-1, 0)
+            if char == "D":
+                if not part_2 or (y+1 < len(input_matrix) and input_matrix[y+1][x] != 0):
+                    y = min(y+1, len(input_matrix)-1)
+            if char == "L":
+                if not part_2 or (x-1 > -1 and input_matrix[y][x-1] != 0):
+                    x = max(x-1, 0)
+            if char == "R":
+                if not part_2 or (x+1 < len(input_matrix) and input_matrix[y][x+1] != 0):
+                    x = min(x+1, len(input_matrix)-1)
+        moves.append(input_matrix[y][x])
+    return "".join(str(move) for move in moves)
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
