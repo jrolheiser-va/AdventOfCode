@@ -98,6 +98,47 @@ def day_2():
     return "".join(str(move) for move in moves)
 
 
+def day_3():
+    input_file = get_input_for_day(3)
+    count = 0
+    row = 0
+    triangles = [
+        [],
+        [],
+        []
+    ]
+    for line in input_file:
+        nums = [piece for piece in line.strip().split(" ") if piece]
+        first = int(nums[0])
+        second = int(nums[1])
+        third = int(nums[2])
+        if not part_2:
+            if first + second > third and first + third > second and second + third > first:
+                count += 1
+        else:
+            row += 1
+            triangles[0].append(first)
+            triangles[1].append(second)
+            triangles[2].append(third)
+            if row % 3 == 0:
+                if triangles[0][0] + triangles[0][1] > triangles[0][2] \
+                        and triangles[0][0] + triangles[0][2] > triangles[0][1] \
+                        and triangles[0][1] + triangles[0][2] > triangles[0][0]:
+                    count += 1
+                if triangles[1][0] + triangles[1][1] > triangles[1][2] \
+                        and triangles[1][0] + triangles[1][2] > triangles[1][1] \
+                        and triangles[1][1] + triangles[1][2] > triangles[1][0]:
+                    count += 1
+                if triangles[2][0] + triangles[2][1] > triangles[2][2] \
+                        and triangles[2][0] + triangles[2][2] > triangles[2][1] \
+                        and triangles[2][1] + triangles[2][2] > triangles[2][0]:
+                    count += 1
+                triangles[0] = []
+                triangles[1] = []
+                triangles[2] = []
+    return count
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
