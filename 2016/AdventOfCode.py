@@ -139,6 +139,42 @@ def day_3():
     return count
 
 
+def day_4():
+    def cmp_char_counts(x, y):
+        diff = (x[1] < y[1]) - (x[1] > y[1])
+        if diff == 0:
+            diff = (ord(x[0]) > ord(y[0])) - (ord(x[0]) < ord(y[0]))
+        return diff
+
+    input_file = get_input_for_day(4)
+    count = 0
+    for line in input_file:
+        pieces = line.strip().rstrip("]").split("[")
+        name = pieces[0].rstrip("-1234567890")
+        sector_id = int(pieces[0].split("-")[-1])
+        checksum = pieces[1]
+        char_counts = {}
+        for char in name:
+            if char != "-":
+                char_counts[char] = name.count(char)
+        most_commons = sorted(char_counts.items(), cmp=cmp_char_counts)[:len(checksum)]
+        if all(most_common[0] in checksum for most_common in most_commons):
+            count += sector_id
+            if part_2:
+                unencrypted_string = ""
+                for char in name:
+                    if char == "-":
+                        unencrypted_string += " "
+                    else:
+                        normalized_ord = ord(char) % 97
+                        rotated_ord = (normalized_ord + sector_id) % 26
+                        unencrypted_string += chr(rotated_ord + 97)
+                if unencrypted_string == "northpole object storage":
+                    return sector_id
+
+    return count
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
