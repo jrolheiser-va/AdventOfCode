@@ -175,6 +175,28 @@ def day_4():
     return count
 
 
+def day_5():
+    from hashlib import md5
+
+    input_line = get_input_for_day(5).readline()
+    counter = 0
+    door_id = []
+    if part_2:
+        door_id = [None] * 8
+    while len(door_id) < 8 or (part_2 and any(id_piece is None for id_piece in door_id)):
+        next_hash = md5(input_line + str(counter)).hexdigest()
+        if next_hash.startswith("00000"):
+            if not part_2:
+                door_id.append(next_hash[5])
+            else:
+                position = next_hash[5]
+                if not position.isalpha() and int(position) < 8:
+                    if door_id[int(position)] is None:
+                        door_id[int(position)] = next_hash[6]
+        counter += 1
+    return ''.join(door_id)
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
