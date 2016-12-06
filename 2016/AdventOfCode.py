@@ -197,9 +197,26 @@ def day_5():
     return ''.join(door_id)
 
 
+def day_6():
+    input_line = get_input_for_day(6)
+    string_holders = [""] * 8
+    for line in input_line:
+        for ind, char in enumerate(line.strip()):
+            string_holders[ind] += char
+    commons = []
+    from collections import Counter
+    for string_holder in string_holders:
+        most_common = Counter(string_holder).most_common()
+        if not part_2:
+            commons.append(most_common[0])
+        else:
+            commons.append(most_common[-1])
+    return "".join(common[0] for common in commons)
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
-        if 'day_%s' % day in dir():
+        if 'day_%s' % day in dir() and day not in [5]:
             print 'Day %s:' % day
             part_2 = False
             print ' Part 1:', eval('day_%s()' % day)
