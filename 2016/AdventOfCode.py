@@ -214,6 +214,48 @@ def day_6():
     return "".join(common[0] for common in commons)
 
 
+def day_7():
+    input_file = get_input_for_day(7)
+    count = 0
+    for line in input_file:
+        opening = False
+        could_be_valid = False
+        bab_blocks = []
+        aba_blocks = []
+        for index, char in enumerate(line[:-3]):
+            if not part_2:
+                if char is "[":
+                    opening = True
+                    continue
+                if char is "]":
+                    opening = False
+                    continue
+                if opening and char == line[index + 3] and line[index + 1] == line[index + 2] and char != line[index+1]:
+                    could_be_valid = False
+                    break
+                if not opening and char == line[index + 3] and line[index + 1] == line[index + 2] and char != line[index+1]:
+                    could_be_valid = True
+            else:
+                if char is "[":
+                    opening = True
+                    continue
+                if char is "]":
+                    opening = False
+                    continue
+                if opening and char == line[index+2]:
+                    bab_blocks.append(line[index+1] + char + line[index+1])
+                if not opening and char == line[index+2]:
+                    aba_blocks.append(line[index+1] + char + line[index+1])
+                if opening and (char + line[index+1] + line[index+2]) in aba_blocks:
+                    count += 1
+                    break
+                if not opening and (char + line[index + 1] + line[index + 2]) in bab_blocks:
+                    count += 1
+                    break
+        if could_be_valid:
+            count += 1
+    return count
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir() and day not in [5]:
