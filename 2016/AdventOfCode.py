@@ -256,9 +256,65 @@ def day_7():
             count += 1
     return count
 
+
+def day_8():
+    input_file = get_input_for_day(8)
+    display = [
+        ["."] * 50,
+        ["."] * 50,
+        ["."] * 50,
+        ["."] * 50,
+        ["."] * 50,
+        ["."] * 50
+    ]
+    for line in input_file:
+        if 'rect' in line:
+            nums = line.split(' ')[1]
+            nums = nums.split('x')
+            x = int(nums[0])
+            y = int(nums[1])
+            for row, row_data in enumerate(display):
+                for col, col_data in enumerate(row_data):
+                    if y > row and x > col:
+                        display[row][col] = "#"
+        if 'rotate' in line:
+            if 'row' in line:
+                pieces = line.split(' ')
+                row = int(pieces[2].lstrip('y='))
+                rotation = int(pieces[4])
+                on_spots = []
+                for col, spot in enumerate(display[row]):
+                    if spot == "#":
+                        display[row][col] = "."
+                        on_spots.append(col)
+                on_spots = map(lambda x: (x + rotation) % 50, on_spots)
+                for col, _ in enumerate(display[row]):
+                    if col in on_spots:
+                        display[row][col] = "#"
+            if 'column' in line:
+                pieces = line.split(' ')
+                col = int(pieces[2].lstrip('x='))
+                rotation = int(pieces[4])
+                on_spots = []
+                for row, _ in enumerate(display):
+                    if display[row][col] == "#":
+                        display[row][col] = "."
+                        on_spots.append(row)
+                on_spots = map(lambda x: (x + rotation) % 6, on_spots)
+                for row, _ in enumerate(display):
+                    if row in on_spots:
+                        display[row][col] = "#"
+
+    count = 0
+    for row in display:
+        count += row.count("#")
+        print " ".join(row)
+    return count
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
-        if 'day_%s' % day in dir() and day not in [5]:
+        if 'day_%s' % day in dir() and day not in [5, 8]:
             print 'Day %s:' % day
             part_2 = False
             print ' Part 1:', eval('day_%s()' % day)
