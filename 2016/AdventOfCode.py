@@ -312,6 +312,55 @@ def day_8():
     return count
 
 
+def day_9():
+    input_line = get_input_for_day(9).readline()
+    if not part_2:
+        open_index = 0
+        full_string = ""
+        pass_index = -1
+        opening = False
+        for index, char in enumerate(input_line):
+            if char is "(" and index > pass_index:
+                opening = True
+                open_index = index
+            elif char is ")" and index > pass_index:
+                opening = False
+                close_index = index
+                marker = input_line[open_index+1:close_index]
+                pieces = marker.split('x')
+                num_chars = int(pieces[0])
+                repeat = int(pieces[1])
+                chars = input_line[close_index+1:close_index+num_chars+1]
+                full_string += (repeat - 1) * chars
+                pass_index = close_index + num_chars
+            elif not opening:
+                full_string += char
+        return len(full_string)
+    else:
+        def count_line(line):
+            open_index = 0
+            opening = False
+            count = 0
+            for index, char in enumerate(line):
+                if char is "(":
+                    opening = True
+                    open_index = index
+                elif char is ")":
+                    opening = False
+                    close_index = index
+                    marker = line[open_index + 1:close_index]
+                    pieces = marker.split('x')
+                    num_chars = int(pieces[0])
+                    repeat = int(pieces[1])
+                    chars = line[close_index + 1:close_index + num_chars + 1]
+                    count += (repeat - 1) * count_line(chars)
+                elif not opening:
+                    count += 1
+            return count
+
+        return count_line(input_line)
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir() and day not in [5, 8]:
