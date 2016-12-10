@@ -361,6 +361,55 @@ def day_9():
         return count_line(input_line)
 
 
+def day_10():
+    from collections import defaultdict
+    input_file = get_input_for_day(10)
+
+    bots = defaultdict(lambda: {
+        'value': [],
+        'low_target': '',
+        'low_index': '',
+        'high_target': '',
+        'high_index': ''
+    })
+
+    outputs = defaultdict(list)
+
+    for line in input_file:
+        if line.startswith('value'):
+            pieces = line.split(' ')
+            value = int(pieces[1])
+            bot = int(pieces[5])
+            bots[bot]['value'].append(value)
+        if line.startswith('bot'):
+            pieces = line.split(' ')
+            this_bot = int(pieces[1])
+            low_target = pieces[5]
+            low_index = int(pieces[6])
+            high_target = pieces[10]
+            high_index = int(pieces[11])
+            bots[this_bot]['low_target'] = low_target
+            bots[this_bot]['low_index'] = low_index
+            bots[this_bot]['high_target'] = high_target
+            bots[this_bot]['high_index'] = high_index
+    while any(len(bots[bot]['value']) > 1 for bot in bots):
+        for bot in bots:
+            if len(bots[bot]['value']) > 1:
+                if not part_2 and sorted(bots[bot]['value']) == [17, 61]:
+                    return bot
+                if bots[bot]['high_target'] == 'bot':
+                    bots[bots[bot]['high_index']]['value'].append(max(bots[bot]['value']))
+                else:
+                    outputs[bots[bot]['high_index']].append(max(bots[bot]['value']))
+
+                if bots[bot]['low_target'] == 'bot':
+                    bots[bots[bot]['low_index']]['value'].append(min(bots[bot]['value']))
+                else:
+                    outputs[bots[bot]['low_index']].append(min(bots[bot]['value']))
+                bots[bot]['value'] = []
+
+    return outputs[0][0] * outputs[1][0] * outputs[2][0]
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir() and day not in [5, 8]:
