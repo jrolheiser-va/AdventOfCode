@@ -410,9 +410,55 @@ def day_10():
 
     return outputs[0][0] * outputs[1][0] * outputs[2][0]
 
+
+def day_12():
+    input_file = get_input_for_day(12)
+    a = b = c = d = 0
+    instructions = []
+    if part_2:
+        instructions.append("cpy 1 c")
+    for line in input_file:
+        instructions.append(line.strip())
+    i = 0
+    while i < len(instructions):
+        instruction = instructions[i]
+        if instruction.startswith('cpy'):
+            pieces = instruction.split(' ')
+            try:
+                value = int(pieces[1])
+            except:
+                value = pieces[1]
+            command = "{register} = {value}".format(
+                register=pieces[2],
+                value=value
+            )
+            exec command
+        elif instruction.startswith('inc'):
+            pieces = instruction.split(' ')
+            command = "{register} += 1".format(
+                register=pieces[1]
+            )
+            exec command
+        elif instruction.startswith('dec'):
+            pieces = instruction.split(' ')
+            command = "{register} -= 1".format(
+                register=pieces[1]
+            )
+            exec command
+        made_jump = False
+        if instruction.startswith('jnz'):
+            pieces = instruction.split(' ')
+            if eval(pieces[1]) != 0:
+                made_jump = True
+                i += int(pieces[2])
+        if not made_jump:
+            i += 1
+    return a
+
 if __name__ == '__main__':
+    takes_awhile = [5, 8, 12]
     for day in xrange(1, 26):
-        if 'day_%s' % day in dir() and day not in [5, 8]:
+        if 'day_%s' % day in dir() and day not in takes_awhile:
             print 'Day %s:' % day
             part_2 = False
             print ' Part 1:', eval('day_%s()' % day)
