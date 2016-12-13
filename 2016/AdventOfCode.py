@@ -455,6 +455,60 @@ def day_12():
             i += 1
     return a
 
+
+def bfs(graph, start, end, depth=1000):
+    queue = list()
+    queue.append([start])
+    visited_locations = set()
+    visited_locations.add((start[0], start[1]))
+    while queue:
+        path = queue.pop(0)
+        tail = path[-1]
+        if tail == end:
+            return path
+        for direction in ['up', 'down', 'left', 'right']:
+            next_step = [tail[0], tail[1]]
+            if direction == 'up':
+                next_step[1] -= 1
+            if direction == 'down':
+                next_step[1] += 1
+            if direction == 'left':
+                next_step[0] -= 1
+            if direction == 'right':
+                next_step[0] += 1
+            if 0 <= next_step[0] < len(graph) and 0 <= next_step[1] < len(graph):
+                if graph[next_step[1]][next_step[0]] != "#":
+                    if next_step not in path:
+                        visited_locations.add((next_step[0], next_step[1]))
+                        next_path = list(path)
+                        next_path.append(next_step)
+                        if len(next_path) <= depth:
+                            queue.append(next_path)
+    return visited_locations
+
+
+def day_13():
+    input_number = int(get_input_for_day(13).readline())
+    target = [31, 39]
+    formula = lambda x, y: x*x + 3*x + 2*x*y + y + y*y + input_number
+    num_1_bits = lambda x, y: bin(formula(x, y)).count('1')
+    maze = []
+    for y in xrange(100):
+        row = []
+        for x in xrange(100):
+            if num_1_bits(x, y) % 2 == 0:
+                row.append(' ')
+            else:
+                row.append('#')
+        maze.append(row)
+    if not part_2:
+        path = bfs(maze, [1, 1], target)
+        return len(path) - 1
+    else:
+        path = bfs(maze, [1, 1], [100, 100], depth=50)
+        return len(path)
+
+
 if __name__ == '__main__':
     takes_awhile = [5, 8, 12]
     for day in xrange(1, 26):
