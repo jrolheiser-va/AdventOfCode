@@ -509,8 +509,49 @@ def day_13():
         return len(path)
 
 
+def day_14():
+    from hashlib import md5
+    input_line = get_input_for_day(14).readline()
+    keys = []
+    hash_cache = {}
+    index = 0
+    while len(keys) < 64:
+        index += 1
+        md5_hash = hash_cache.get(index)
+        if not md5_hash:
+            md5_hash = md5(input_line + str(index)).hexdigest()
+            if part_2:
+                for _ in xrange(2016):
+                    md5_hash = md5(md5_hash).hexdigest()
+            hash_cache[index] = md5_hash
+        same_character = None
+        for i in xrange(len(md5_hash)-2):
+            if md5_hash[i] == md5_hash[i+1] and md5_hash[i] == md5_hash[i+2]:
+                same_character = md5_hash[i]
+                break
+        if same_character is not None:
+            for i in xrange(1, 1000):
+                new_hash = hash_cache.get(index + i)
+                if not new_hash:
+                    new_hash = md5(input_line + str(index + i)).hexdigest()
+                    if part_2:
+                        for _ in xrange(2016):
+                            new_hash = md5(new_hash).hexdigest()
+                    hash_cache[index+i] = new_hash
+                found_hash = False
+                for char in xrange(len(new_hash)-4):
+                    if new_hash[char] == same_character and new_hash[char] == new_hash[char+1] and new_hash[char] == new_hash[char+2] and new_hash[char] == new_hash[char+3] and new_hash[char] == new_hash[char+4]:
+                        print (md5_hash, index, new_hash, index + i)
+                        keys.append((md5_hash, index, new_hash, index + i))
+                        found_hash = True
+                        break
+                if found_hash:
+                    break
+    return index
+
+
 if __name__ == '__main__':
-    takes_awhile = [5, 8, 12]
+    takes_awhile = [5, 8, 12, 14]
     for day in xrange(1, 26):
         if 'day_%s' % day in dir() and day not in takes_awhile:
             print 'Day %s:' % day
