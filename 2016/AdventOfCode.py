@@ -541,7 +541,6 @@ def day_14():
                 found_hash = False
                 for char in xrange(len(new_hash)-4):
                     if new_hash[char] == same_character and new_hash[char] == new_hash[char+1] and new_hash[char] == new_hash[char+2] and new_hash[char] == new_hash[char+3] and new_hash[char] == new_hash[char+4]:
-                        print (md5_hash, index, new_hash, index + i)
                         keys.append((md5_hash, index, new_hash, index + i))
                         found_hash = True
                         break
