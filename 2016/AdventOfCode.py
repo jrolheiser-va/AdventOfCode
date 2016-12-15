@@ -549,6 +549,21 @@ def day_14():
     return index
 
 
+def day_15():
+    input_file = get_input_for_day(15)
+    discs = []
+    for line in input_file:
+        pieces = line.rstrip('.\n').split(' ')
+        positions = int(pieces[3])
+        start = int(pieces[-1])
+        discs.append((start, positions))
+    if part_2:
+        discs.append((0, 11))
+    time = 0
+    while not all((disc[0] + time + index + 1) % disc[1] == 0 for index, disc in enumerate(discs)):
+        time += 1
+    return time
+
 if __name__ == '__main__':
     takes_awhile = [5, 8, 12, 14]
     for day in xrange(1, 26):
