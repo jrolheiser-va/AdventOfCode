@@ -564,6 +564,26 @@ def day_15():
         time += 1
     return time
 
+
+def day_16():
+    def grow(a):
+        b = "".join(["10"[int(char)] for char in a[::-1]])
+        return "".join((a, "0", b))
+
+    def checksum(data):
+        new_checksum = "".join(["01"[data[i] == data[i + 1]] for i in xrange(0, len(data), 2)])
+        if len(new_checksum) % 2 == 0:
+            new_checksum = checksum(new_checksum)
+        return new_checksum
+
+    input_line = get_input_for_day(16).readline()
+    disk = grow(input_line)
+    disk_length = 272 if not part_2 else 35651584
+    while len(disk) < disk_length:
+        disk = grow(disk)
+    return checksum(disk[:disk_length])
+
+
 if __name__ == '__main__':
     takes_awhile = [5, 8, 12, 14]
     for day in xrange(1, 26):
