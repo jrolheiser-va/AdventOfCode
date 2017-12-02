@@ -456,7 +456,7 @@ def day_12():
     return a
 
 
-def bfs(graph, start, end, depth=1000):
+def bfs_13(graph, start, end, depth=1000):
     queue = list()
     queue.append([start])
     visited_locations = set()
@@ -502,10 +502,10 @@ def day_13():
                 row.append('#')
         maze.append(row)
     if not part_2:
-        path = bfs(maze, [1, 1], target)
+        path = bfs_13(maze, [1, 1], target)
         return len(path) - 1
     else:
-        path = bfs(maze, [1, 1], [100, 100], depth=50)
+        path = bfs_13(maze, [1, 1], [100, 100], depth=50)
         return len(path)
 
 
@@ -584,8 +584,55 @@ def day_16():
     return checksum(disk[:disk_length])
 
 
+def day_17():
+    from hashlib import md5
+
+    def get_open_directions(passcode, location):
+        hashword = md5(passcode).hexdigest()
+        open_directions = []
+        if hashword[0] in 'bcdef' and (location[0] - 1) not in [-1, 4]:
+            open_directions.append('U')
+        if hashword[1] in 'bcdef' and (location[0] + 1) not in [-1, 4]:
+            open_directions.append('D')
+        if hashword[2] in 'bcdef' and (location[1] - 1) not in [-1, 4]:
+            open_directions.append('L')
+        if hashword[3] in 'bcdef' and (location[1] + 1) not in [-1, 4]:
+            open_directions.append('R')
+        return "".join(open_directions)
+
+    def calculate_location(location, direction):
+        commands = {
+            'U': lambda d: (d[0] - 1, d[1]),
+            'D': lambda d: (d[0] + 1, d[1]),
+            'L': lambda d: (d[0], d[1] - 1),
+            'R': lambda d: (d[0], d[1] + 1),
+        }
+        return commands[direction](location)
+
+    queue = list()
+    input_hash = "awrkjxxr"
+    start = (0, 0)
+    end = (3, 3)
+    queue.append(["", start])
+    final_path = ""
+    while queue:
+        path = queue.pop(0)
+        location = path[1]
+        if location == end:
+            final_path = path[0]
+            if part_2:
+                continue
+            break
+        for direction in get_open_directions(input_hash + path[0], path[1]):
+            new_path = path[0] + direction
+            new_location = calculate_location(path[1], direction)
+            queue.append([new_path, new_location])
+    if part_2:
+        final_path = len(final_path)
+    return final_path
+
 if __name__ == '__main__':
-    takes_awhile = [5, 8, 12, 14]
+    takes_awhile = [5, 8, 12, 14, 16]
     for day in xrange(1, 26):
         if 'day_%s' % day in dir() and day not in takes_awhile:
             print 'Day %s:' % day
