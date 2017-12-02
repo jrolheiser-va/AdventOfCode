@@ -21,6 +21,22 @@ def day_1():
     return checksum
 
 
+def day_2():
+    input_file = get_input_for_day(2)
+    diffs = []
+    for line in input_file:
+        nums = map(int, line.split())
+        if not part_2:
+            diffs.append(max(nums) - min(nums))
+        else:
+            for i in range(len(nums)):
+                for j in range(i + 1, len(nums)):
+                    if nums[i] % nums[j] == 0 or nums[j] % nums[i] == 0:
+                        diffs.append(abs(max(nums[i], nums[j])/min(nums[i], nums[j])))
+                        break
+    return sum(diffs)
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
