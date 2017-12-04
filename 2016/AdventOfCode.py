@@ -631,6 +631,37 @@ def day_17():
         final_path = len(final_path)
     return final_path
 
+
+def day_18():
+    def gen_next_row(row):
+        next_row = ""
+        if row[0:2] in ['.^', '^^']:
+            next_row += "^"
+        else:
+            next_row += "."
+
+        for i in range(0, len(row) - 2):
+            if row[i:i+3] in ['^^.', '.^^', '^..', '..^']:
+                next_row += "^"
+            else:
+                next_row += "."
+        if row[-2:] in ['^.', '^^']:
+            next_row += "^"
+        else:
+            next_row += "."
+        return next_row
+
+    input_string = "^.^^^.^..^....^^....^^^^.^^.^...^^.^.^^.^^.^^..^.^...^.^..^.^^.^..^.....^^^.^.^^^..^^...^^^...^...^."
+    safe_tiles = input_string.count(".")
+    iterations = 40
+    if part_2:
+        iterations = 400000
+    for i in xrange(iterations - 1):
+        input_string = gen_next_row(input_string)
+        safe_tiles += input_string.count(".")
+    return safe_tiles
+
+
 if __name__ == '__main__':
     takes_awhile = [5, 8, 12, 14, 16]
     for day in xrange(1, 26):
