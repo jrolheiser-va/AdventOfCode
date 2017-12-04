@@ -81,6 +81,21 @@ def day_3():
     return sum(map(abs, result)) if not part_2 else result
 
 
+def day_4():
+    input_file = get_input_for_day(4)
+    answer = 0
+    for line in input_file:
+        words = set()
+        pieces = line.split()
+        for word in pieces:
+            if (not part_2 and word in words) or "".join(sorted(word)) in words:
+                break
+            words.add(word if not part_2 else "".join(sorted(word)))
+        else:
+            answer += 1
+    return answer
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
