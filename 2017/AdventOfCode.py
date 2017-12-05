@@ -96,6 +96,24 @@ def day_4():
     return answer
 
 
+def day_5():
+    input_file = get_input_for_day(5)
+    jumps = []
+    for line in input_file:
+        jumps.append(int(line))
+    index = 0
+    steps = 0
+    while -1 < index < len(jumps):
+        next_index = index + jumps[index]
+        if part_2 and jumps[index] >= 3:
+            jumps[index] -= 1
+        else:
+            jumps[index] += 1
+        steps += 1
+        index = next_index
+    return steps
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
