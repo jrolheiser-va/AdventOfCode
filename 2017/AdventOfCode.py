@@ -114,6 +114,25 @@ def day_5():
     return steps
 
 
+def day_6():
+    input_line = "11	11	13	7	0	15	5	5	4	4	1	1	7	1	15	11"
+    banks = map(int, input_line.split())
+    cycles = dict()
+    redistributions = 0
+    while True:
+        cycles[''.join(map(str, banks))] = redistributions
+        max_val, max_index = -1, -1
+        for index, bank in enumerate(banks):
+            if bank > max_val:
+                max_val, max_index = bank, index
+        banks[max_index] = 0
+        for i in range(max_index + 1, max_index + max_val + 1):
+            banks[i % len(banks)] += 1
+        redistributions += 1
+        if ''.join(map(str, banks)) in cycles:
+            return redistributions - (0 if not part_2 else cycles[''.join(map(str, banks))])
+
+
 if __name__ == '__main__':
     for day in xrange(1, 26):
         if 'day_%s' % day in dir():
